@@ -1,0 +1,20 @@
+---
+- name: "Playbook to Add Key to Newly Provisioned EC2 Instance"
+  hosts: all
+  tasks:
+       
+        - name: "login to Docker Repo" 
+          command:  sudo docker login -u="arjunavofficial" -p="bty34gCn868vrXBjmSbWIXScXqbITPaXVe0ctlxzA6m6izUcf3jITdBw8mV6cW2e" quay.io
+          ignore_errors: yes      
+        - name: "stopping running docker-copose if any"  
+          command:  sudo docker-compose down 
+          ignore_errors: yes                       
+        - name: "Copying compose file to server" 
+          copy:
+            src: docker-compose.yml
+            dest: docker-compose.yml
+            force: yes
+          ignore_errors: yes      
+        - name: "starting container"
+          command: sudo docker-compose up -d 
+          ignore_errors: yes
