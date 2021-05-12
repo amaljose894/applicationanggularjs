@@ -1,37 +1,27 @@
+
 pipeline {
-   agent any
-   environment {
-      TAG = getDockertag()
-    }
+    agent any
 
     stages {
-        stage('Source Code CheckOut') {
-           
+        stage('frontend') {
             steps {
-                echo 'Pulling Latest Infra Code From bit Bucket'
-              git([url: 'https://github.com/amaljose894/applicationanggularjs.git', branch: 'master'])
-            
-                
+                echo 'executing yarn'
+                nodejs('nodejs-10.17')
+              {
+                sh 'yarn install'
             }
         }
-        stage('Building and Pushing Image to Artifactory') {
-           
+        stage('backend') {
             steps {
-            echo "1"
-            sh 'docker login -u="amaljose" -p="jVbExP0/l2geeWxzbTqiAsbxqwd9UM00r20DAj83newLLuXrZmxWDmrVYuYfAQ3n" quay.io'
-            sh 'TAG=`git rev-parse --short HEAD`'
-            sh 'sudo docker build -t quay.io/amaljose/angularjs:${TAG} .'
-            sh 'docker image push quay.io/amaljose/angularjs:${TAG}'
+                echo 'executing gradle'
+              withgradle() {
+                sh './gradlew -v'
             }
         }
-            stage('Deploying Application') {
-           
+        stage('Deploy') {
             steps {
-            echo "2"
-            sh 'sudo ansible-playbook --extra-vars "TAG=${TAG}" angular_deploy.yml'
-                }
+                echo 'Deploying45 and....'
             }
-    
-    } 
+        }
+    }
 }
-
