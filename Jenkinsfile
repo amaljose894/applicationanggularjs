@@ -9,8 +9,12 @@ pipeline {
                 nodejs('nodejs-10.17')
               {
                 sh 'yarn install'
+              }
+            
             }
         }
+          
+          
         stage('backend') {
             steps {
                 echo 'executing gradle'
@@ -18,10 +22,7 @@ pipeline {
                 sh './gradlew -v'
             }
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying45 and....'
-            }
         }
+ 
     }
 }
