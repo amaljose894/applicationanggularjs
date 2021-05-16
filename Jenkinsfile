@@ -1,44 +1,27 @@
-def gv
-
 pipeline {
     agent any
-    parameters {
-        choice(name: 'VERSION', choices: ['1.1.0', '1.2.0', '1.3.0'], description: 'test da')
-        booleanParam(name: 'executeTests', defaultValue: true, description: 'ok da kutta')
-    }
+
     stages {
-        stage("init") {
+        stage('frontend') {
             steps {
-                script {
-                   gv = load "script.groovy" 
-                }
+                echo 'executing yarn'
+                nodejs('nodejs-10.17')
+              {
+                sh 'yarn install'
+              }
+            
             }
         }
-        stage("build") {
+          
+          
+        stage('backend') {
             steps {
-                script {
-                    gv.buildApp()
-                }
+                echo 'executing gradle'
+                withGradle() {
+                   sh './gradlew -v'
             }
         }
-        stage("test") {
-            when {
-                expression {
-                    params.executeTests
-                }
-            }
-            steps {
-                script {
-                    gv.testApp()
-                }
-            }
         }
-        stage("deploy") {
-            steps {
-                script {
-                    gv.deployApp()
-                }
-            }
-        }
-    }   
+ 
+    }
 }
